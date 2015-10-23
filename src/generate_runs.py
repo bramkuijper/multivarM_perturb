@@ -3,7 +3,8 @@
 import numpy
 import math
 
-exe = "./xmatfluct_two_trait_sin"
+#exe = "./xmatfluct_two_trait_sin"
+exe = "/home/uccoaku/multivarM_perturb/src/xmatfluct_two_trait_sin"
 
 
 c = math.sqrt(0.7)
