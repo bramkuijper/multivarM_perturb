@@ -185,7 +185,7 @@ void Init()
 
 		for (int j = 0; j < 2; ++j)
 		{
-            // go through the number of haploid loci
+            // go through the number of diploid loci
             // of an individual 
             Pop[i].g[j][0] = Pop[i].phen[j];
             Pop[i].g[j][1] = Pop[i].phen[j];
@@ -294,6 +294,8 @@ void Survive()
     meanpsurvi /= Npop;
 }
 
+
+// do the stats 
 void WriteData()
 {
     double meang[2] = {0,0};

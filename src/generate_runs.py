@@ -12,7 +12,7 @@ mu_g = 0.01
 sdmu_g = 0.02
 mu_m = [ 0.01, 0 ]
 sdmu_m = 0.02
-phi = [ 0 ]
+phi = [ 0, 0.5 ]
 m = " 0 0 0 0 "
 var_p  = 0.1
 
@@ -21,8 +21,8 @@ rate1 = [0.5, math.pi - 0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math
 rate2 = [0.5, math.pi - 0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math.pi/25))
 
 # vary the size of change in the mean environment 
-int_size1 = list(numpy.arange(0,5,4.0/25))
-int_size2 = list(numpy.arange(0,5,4.0/25))
+int_size1 = list(numpy.arange(0,5,5.0/25))
+int_size2 = list(numpy.arange(0,5,5.0/25))
 
 # vary the direction of change in the mean environment (pos or neg)
 direction1 = [ -1, 1 ]
