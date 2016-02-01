@@ -392,6 +392,7 @@ void Reproduce()
     if (NSurv < 2)
     {
         WriteData();
+        WriteParameters();
         exit(1);
     }
 
