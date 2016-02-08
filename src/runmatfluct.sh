@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./xmatfluct_two_trait_sin 1.0 0.01 0.02     0.01 0.02   1  0 0 0 0   0.25  0.5 0.5      0.5 0.5 1.0 0 10.0  0
+./xmatfluct_two_trait_sin 0.7 0.005 0.02     0.0 0.02   0  0 0 0 0   0.25  0.5 0.5      2.9 2.9     0   0.0 0.0     1.5 1.5    2.0 2.0  0 &
 
 #	c = atof(argv[1]);
 #	mu_g= atof(argv[2]);
@@ -20,4 +20,8 @@
 #    phiptb = atof(argv[16]);
 #    int1ptb = atof(argv[17]);
 #    int2ptb = atof(argv[18]);
-#    diagonal_only = atoi(argv[19]);
+#    ampl1 = atof(argv[19]);
+#    ampl2 = atof(argv[20]);
+#    ampl1ptb = atof(argv[21]);
+#    ampl2ptb = atof(argv[22]);
+#    diagonal_only = atoi(argv[23]);

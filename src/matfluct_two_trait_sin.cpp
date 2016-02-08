@@ -34,6 +34,8 @@ double int1 = 0;
 double int2 = 0;
 double rate1 = 0;
 double rate2 = 0;
+double ampl1 = 0;
+double ampl2 = 0;
 
 
 // values after perturbation
@@ -41,6 +43,8 @@ double rate1ptb = 0;
 double rate2ptb = 0;
 double int1ptb = 0;
 double int2ptb = 0;
+double ampl1ptb = 0;
+double ampl2ptb = 0;
 double phiptb = 0;
 
 const double pi = M_PI;
@@ -117,7 +121,11 @@ void initArguments(int argc, char *argv[])
     phiptb = atof(argv[16]);
     int1ptb = atof(argv[17]);
     int2ptb = atof(argv[18]);
-    diagonal_only = atoi(argv[19]);
+    ampl1 = atof(argv[19]);
+    ampl2 = atof(argv[20]);
+    ampl1ptb = atof(argv[21]);
+    ampl2ptb = atof(argv[22]);
+    diagonal_only = atoi(argv[23]);
 }
 
 void MutateG(double &G)
@@ -140,6 +148,8 @@ void WriteParameters()
 		<< "sigma_p:;" <<  sigma_p << ";"<< endl
 		<< "rate1:;" <<  rate1 << ";"<< endl
 		<< "rate2:;" <<  rate2 << ";"<< endl
+		<< "ampl1:;" <<  ampl1 << ";"<< endl
+		<< "ampl2:;" <<  ampl2 << ";"<< endl
 		<< "mu_g:;" <<  mu_g << ";"<< endl
 		<< "mu_m:;" <<  mu_m << ";"<< endl
 		<< "mu_std_m:;" <<  sdmu_m << ";"<< endl
@@ -148,6 +158,8 @@ void WriteParameters()
         << "rate2ptb:;" << rate2ptb << ";" << endl
         << "int1ptb:;" << int1ptb << ";" << endl
         << "int2ptb:;" << int2ptb << ";" << endl
+        << "ampl1ptb:;" << ampl1ptb << ";" << endl
+        << "ampl2ptb:;" << ampl2ptb << ";" << endl
         << "phi:;" << phi << ";" << endl
         << "phiptb:;" << phiptb << ";" << endl
 		<< "seed:;" << seed << ";"<< endl
@@ -264,13 +276,15 @@ void Survive()
         rate2 = rate2ptb;
         int1 = int1ptb;
         int2 = int2ptb;
+        ampl1 = ampl1ptb;
+        ampl2 = ampl2ptb;
         phi = phiptb;
     }
 
 
     // normally fluctuating equilibria
-    zopt[0] = int1 + sin(rate1 * (generation + phi));
-    zopt[1] = int2 + sin(rate2 * generation);
+    zopt[0] = int1 + ampl1 * sin(rate1 * (generation + phi));
+    zopt[1] = int2 + ampl2 * sin(rate2 * generation);
  
     meanpsurvi = 0;
 
