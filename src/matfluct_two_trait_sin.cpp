@@ -26,17 +26,19 @@ double mu_g = 0.05;            // mutation rate
 double sdmu_g = 0.4;			 // standard deviation mutation size
 double mu_m = 0.05;            // mutation rate
 double sdmu_m = 0.4;			 // standard deviation mutation size
+double mu_b = 0.05;            // mutation rate
+double sdmu_b = 0.4;			 // standard deviation mutation size
 
 bool diagonal_only = false; // only m11 and m22 allowed to evolve
 double sigma_p = sqrt(0.1); // phenotypic variance
 
-double int1 = 0;
-double int2 = 0;
-double rate1 = 0;
-double rate2 = 0;
-double ampl1 = 0;
-double ampl2 = 0;
-
+// initial values
+double int1_t0 = 0;
+double int2_t0 = 0;
+double rate1_t0 = 0;
+double rate2_t0 = 0;
+double ampl1_t0 = 0;
+double ampl2_t0 = 0;
 
 // values after perturbation
 double rate1ptb = 0;
@@ -46,6 +48,16 @@ double int2ptb = 0;
 double ampl1ptb = 0;
 double ampl2ptb = 0;
 double phiptb = 0;
+
+// current values
+double int1 = 0;
+double int2 = 0;
+double rate1 = 0;
+double rate2 = 0;
+double ampl1 = 0;
+double ampl2 = 0;
+
+
 
 const double pi = M_PI;
 double omega1= 0;
@@ -62,6 +74,8 @@ unsigned seed = 0;      // keep track of the random number seed
 double zopt[2] = {0,0}; // keep track of current optimum
 double omega2[1000];    // strength of selection
 
+double epsilon[2] = {0,0}; // current environment
+
 double m[2][2] = {{0,0},{0,0}}; // initial values of matrix M
 double m0 = 0;			 // initial value of the maternal effect
 double meanpsurvi = 0;  // track mean survival prob
@@ -72,6 +86,7 @@ struct Individual
 {
     double g[2][2]; // genetic loci (elevation)
     double m[2][2][2]; // maternal effects loci
+    double b[2][2][2]; // phenotypic plasticity loci
     double phen[2]; // resulting phenotypes
 
     double wi; //fitness value
@@ -108,24 +123,26 @@ void initArguments(int argc, char *argv[])
 	sdmu_g = atof(argv[3]);
 	mu_m= atof(argv[4]);
 	sdmu_m = atof(argv[5]);
-	phi = atof(argv[6]);
-    m[0][0] = atof(argv[7]);
-    m[0][1] = atof(argv[8]);
-    m[1][0] = atof(argv[9]);
-    m[1][1] = atof(argv[10]);
-    sigma_p = sqrt(atof(argv[11]));
-    rate1 = atof(argv[12]);
-    rate2 = atof(argv[13]);
-    rate1ptb = atof(argv[14]);
-    rate2ptb = atof(argv[15]);
-    phiptb = atof(argv[16]);
-    int1ptb = atof(argv[17]);
-    int2ptb = atof(argv[18]);
-    ampl1 = atof(argv[19]);
-    ampl2 = atof(argv[20]);
-    ampl1ptb = atof(argv[21]);
-    ampl2ptb = atof(argv[22]);
-    diagonal_only = atoi(argv[23]);
+	mu_b= atof(argv[6]);
+	sdmu_b = atof(argv[7]);
+	phi = atof(argv[8]);
+    m[0][0] = atof(argv[9]);
+    m[0][1] = atof(argv[10]);
+    m[1][0] = atof(argv[11]);
+    m[1][1] = atof(argv[12]);
+    sigma_p = sqrt(atof(argv[13]));
+    rate1_t0 = atof(argv[14]);
+    rate2_t0 = atof(argv[15]);
+    rate1ptb = atof(argv[16]);
+    rate2ptb = atof(argv[17]);
+    phiptb = atof(argv[18]);
+    int1ptb = atof(argv[19]);
+    int2ptb = atof(argv[20]);
+    ampl1_t0 = atof(argv[21]);
+    ampl2_t0 = atof(argv[22]);
+    ampl1ptb = atof(argv[23]);
+    ampl2ptb = atof(argv[24]);
+    diagonal_only = atoi(argv[25]);
 }
 
 void MutateG(double &G)
@@ -138,6 +155,10 @@ void MutateM(double &M)
 	M += gsl_rng_uniform(r)<mu_m ? gsl_ran_gaussian(r,sdmu_m) : 0;
 }
 
+void MutateB(double &B)
+{
+	B += gsl_rng_uniform(r)<mu_b ? gsl_ran_gaussian(r,sdmu_b) : 0;
+}
 void WriteParameters()
 {
 	DataFile << endl
@@ -146,16 +167,20 @@ void WriteParameters()
 		<< "diagonalM:;" << diagonal_only << ";" << endl
 		<< "c:;" <<  c << ";"<< endl
 		<< "sigma_p:;" <<  sigma_p << ";"<< endl
-		<< "rate1:;" <<  rate1 << ";"<< endl
-		<< "rate2:;" <<  rate2 << ";"<< endl
-		<< "ampl1:;" <<  ampl1 << ";"<< endl
-		<< "ampl2:;" <<  ampl2 << ";"<< endl
+		<< "rate1:;" <<  rate1_t0 << ";"<< endl
+		<< "rate2:;" <<  rate2_t0 << ";"<< endl
+		<< "ampl1:;" <<  ampl1_t0 << ";"<< endl
+		<< "ampl2:;" <<  ampl2_t0 << ";"<< endl
 		<< "mu_g:;" <<  mu_g << ";"<< endl
+		<< "mu_b:;" <<  mu_b << ";"<< endl
 		<< "mu_m:;" <<  mu_m << ";"<< endl
 		<< "mu_std_m:;" <<  sdmu_m << ";"<< endl
 		<< "mu_std_g:;" <<  sdmu_g << ";"<< endl
+		<< "mu_std_b:;" <<  sdmu_b << ";"<< endl
         << "rate1ptb:;" << rate1ptb << ";" << endl
         << "rate2ptb:;" << rate2ptb << ";" << endl
+        << "int1:;" << int1_t0 << ";" << endl
+        << "int2:;" << int2_t0 << ";" << endl
         << "int1ptb:;" << int1ptb << ";" << endl
         << "int2ptb:;" << int2ptb << ";" << endl
         << "ampl1ptb:;" << ampl1ptb << ";" << endl
@@ -209,6 +234,15 @@ void Init()
             }
         }
 	}
+
+    // initialize environment
+    ampl1 = ampl1_t0;
+    ampl2 = ampl2_t0;
+    int1 = int1_t0;
+    int2 = int2_t0;
+    rate1 = rate1_t0;
+    rate2 = rate2_t0;
+
 }
 
 void Create_Kid(int mother, int father, Individual &kid)
@@ -225,6 +259,7 @@ void Create_Kid(int mother, int father, Individual &kid)
     kid.g[1][1] = Survivors[father].g[1][gsl_rng_uniform_int(r,2)];
     MutateG(kid.g[1][1]);
 
+    // environmental variance
     kid.phen[0] = gsl_ran_gaussian(r,sigma_p);
     kid.phen[1] = gsl_ran_gaussian(r,sigma_p);
 
@@ -257,11 +292,18 @@ void Create_Kid(int mother, int father, Individual &kid)
                 kid.m[i][j][0] = 0;
                 kid.m[i][j][1] = 0;
             }
+
+            kid.b[i][j][0] = Survivors[mother].b[i][j][gsl_rng_uniform_int(r,2)];
+            MutateB(kid.b[i][j][0]);
+            
+            kid.b[i][j][1] = Survivors[father].b[i][j][gsl_rng_uniform_int(r,2)];
+            MutateB(kid.b[i][j][0]);
+
+            kid.phen[i] += .5 * (kid.b[i][j][0] + kid.b[i][j][1]) * epsilon[i];
         }
 
         assert(isnan(kid.phen[i]) == 0);
     }
-
 }
 
 
@@ -283,8 +325,8 @@ void Survive()
 
 
     // normally fluctuating equilibria
-    zopt[0] = int1 + ampl1 * sin(rate1 * (generation + phi));
-    zopt[1] = int2 + ampl2 * sin(rate2 * generation);
+    zopt[0] = int1 + ampl1 * epsilon[0];
+    zopt[1] = int2 + ampl2 * epsilon[1];
  
     meanpsurvi = 0;
 
@@ -316,6 +358,8 @@ void WriteData()
     double ssg[2] = {0,0};
     double meanm[2][2] = {{0,0},{0,0}};
     double ssm[2][2] = {{0,0},{0,0}};
+    double meanb[2][2] = {{0,0},{0,0}};
+    double ssb[2][2] = {{0,0},{0,0}};
 
     double meanphen[2] = {0,0};
     double ssphen[3] = {0,0,0};
@@ -338,6 +382,9 @@ void WriteData()
             {
                 meanm[j][k] += 0.5 * (Pop[i].m[j][k][0] + Pop[i].m[j][k][1]);
                 ssm[j][k] += pow(0.5 * (Pop[i].m[j][k][0] + Pop[i].m[j][k][1]),2.0);
+
+                meanb[j][k] += 0.5 * (Pop[i].b[j][k][0] + Pop[i].b[j][k][1]);
+                ssb[j][k] += pow(0.5 * (Pop[i].b[j][k][0] + Pop[i].b[j][k][1]),2.0);
             }
 
         }
@@ -348,6 +395,8 @@ void WriteData()
     double ssgsurv[2] = {0,0};
     double meanmsurv[2][2] = {{0,0},{0,0}};
     double ssmsurv[2][2] = {{0,0},{0,0}};
+    double meanbsurv[2][2] = {{0,0},{0,0}};
+    double ssbsurv[2][2] = {{0,0},{0,0}};
 
     double meanphensurv[2] = {0,0};
     double ssphensurv[2] = {0,0};
@@ -366,11 +415,13 @@ void WriteData()
             {
                 meanmsurv[j][k] += 0.5 * (Survivors[i].m[j][k][0] + Survivors[i].m[j][k][1]);
                 ssmsurv[j][k] += pow(0.5 * (Survivors[i].m[j][k][0] + Survivors[i].m[j][k][1]),2.0);
+                meanbsurv[j][k] += 0.5 * (Survivors[i].b[j][k][0] + Survivors[i].b[j][k][1]);
+                ssbsurv[j][k] += pow(0.5 * (Survivors[i].b[j][k][0] + Survivors[i].b[j][k][1]),2.0);
             }
         }
     }
 
-    DataFile << generation << ";" << NSurv << ";" << zopt[0] << ";" << zopt[1] << ";";
+    DataFile << generation << ";" << NSurv << ";" << zopt[0] << ";" << zopt[1] << ";" << epsilon[0] << ";" << epsilon[1] << ";";
 
     for (int j = 0; j < 2; ++j)
     {
@@ -384,6 +435,8 @@ void WriteData()
         {
             DataFile << (meanm[j][k]/Npop) << ";";
             DataFile << (ssm[j][k]/Npop - pow(meanm[j][k]/Npop,2.0)) << ";";
+            DataFile << (meanb[j][k]/Npop) << ";";
+            DataFile << (ssb[j][k]/Npop - pow(meanb[j][k]/Npop,2.0)) << ";";
         }
 
         DataFile    << (meanphensurv[j]/NSurv) << ";"
@@ -395,6 +448,8 @@ void WriteData()
         {
             DataFile << (meanmsurv[j][k]/NSurv) << ";";
             DataFile << (ssmsurv[j][k]/NSurv - pow(meanmsurv[j][k]/NSurv,2.0)) << ";";
+            DataFile << (meanbsurv[j][k]/NSurv) << ";";
+            DataFile << (ssbsurv[j][k]/NSurv - pow(meanbsurv[j][k]/NSurv,2.0)) << ";";
         }
     }
 
@@ -403,6 +458,10 @@ void WriteData()
 
 void Reproduce()
 {
+    // first change the environment
+    epsilon[0] = sin(rate1 * (generation + phi));
+    epsilon[1] = sin(rate2 * generation);
+
     int Nkids = 0;
 
     if (NSurv < 2)
@@ -437,7 +496,7 @@ void Reproduce()
 
 void WriteDataHeaders()
 {
-    DataFile << "generation;NSurv;zopt1;zopt2"; 
+    DataFile << "generation;NSurv;zopt1;zopt2;epsilon1;epsilon2"; 
     for (int j = 0; j < 2; ++j)
     {
         DataFile << ";meanphen" << (j+1) << ";ssphen" << (j+1) << ";meang" << (j+1) << ";varg" << (j+1);
@@ -445,6 +504,7 @@ void WriteDataHeaders()
         for (int k = 0; k < 2; ++k)
         {
             DataFile << ";meanm" << (j+1) << (k+1) << ";varm" << (j+1) << (k+1);
+            DataFile << ";meanb" << (j+1) << (k+1) << ";varb" << (j+1) << (k+1);
         }
         
         DataFile << ";meanphensurv" << (j+1) << ";ssphensurv" << (j+1) << ";meangsurv" << (j+1) << ";vargsurv" << (j+1);
@@ -452,6 +512,7 @@ void WriteDataHeaders()
         for (int k = 0; k < 2; ++k)
         {
             DataFile << ";meanmsurv" << (j+1) << (k+1) << ";varmsurv" << (j+1) << (k+1);
+            DataFile << ";meanbsurv" << (j+1) << (k+1) << ";varbsurv" << (j+1) << (k+1);
         }
     }
 

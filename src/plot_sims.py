@@ -83,7 +83,7 @@ params,histdat = get_csvdict_by_column(dictdat)
 # initialize and specify size 
 fig = plt.figure(figsize=(10,20))
 
-num_rows = 4
+num_rows = 5
 
 # add first subplot
 plt.subplot(num_rows,1,1)
@@ -105,7 +105,20 @@ plt.ylabel(r'maternal effect, $\bar{m}_{ij}$')
 plt.legend((r'$\bar{m}_{11}$',r'$\bar{m}_{12}$',r'$\bar{m}_{21}$',r'$\bar{m}_{22}$'))
 plt.ylim(-1.5,1.5)
 
+# add second subplot
 plt.subplot(num_rows,1,3)
+plt.plot(histdat["generation"],histdat["meanb11"],'r',
+        histdat["generation"],histdat["meanb12"],'b',
+        histdat["generation"],histdat["meanb21"],'m',
+        histdat["generation"],histdat["meanb22"],'k',
+        linewidth=1)
+plt.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
+plt.ylabel(r'plasticity, $\bar{m}_{ij}$')
+plt.legend((r'$\bar{b}_{11}$',r'$\bar{b}_{12}$',r'$\bar{b}_{21}$',r'$\bar{b}_{22}$'))
+plt.ylim(-1.5,1.5)
+
+
+plt.subplot(num_rows,1,4)
 plt.plot(histdat["generation"],histdat["meanphen1"],'#129aff',
         histdat["generation"],histdat["meanphen2"],'#a60090',
         linewidth=1)
@@ -113,7 +126,7 @@ plt.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
 plt.ylabel(r'phenotype, $\bar{z}_{i}$')
 plt.legend((r'$\bar{z}_{1}$',r'$\bar{z}_{2}$'))
 
-plt.subplot(num_rows,1,4)
+plt.subplot(num_rows,1,5)
 plt.plot(histdat["generation"],histdat["zopt1"],'b',
         histdat["generation"],histdat["zopt2"],'r',
         linewidth=1)
