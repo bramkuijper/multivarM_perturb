@@ -19,8 +19,8 @@ using namespace std;
 /////////////////// parameters ///////////////////
 const int Npop = 5000; // populaiton size
 const int Clutch = 10; // clutch size
-const int NumGen = 50000; // total number of generations
-const int skip = 100; // data output each nskip-th generation
+const int NumGen = 25000; // total number of generations
+const int skip = 15; // data output each nskip-th generation
 
 double mu_g = 0.05;            // mutation rate
 double sdmu_g = 0.4;			 // standard deviation mutation size
