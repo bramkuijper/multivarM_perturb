@@ -12,16 +12,16 @@ mu_g = 0.01
 sdmu_g = 0.02
 mu_m = [ 0.01, 0 ]
 sdmu_m = 0.02
-mu_b = [ 0.01 ]
+mu_b = [ 0.0 ]
 sdmu_b = 0.02
-phi = [ 0 ]
+phi = [ -0.5, 0.5 ]
 m = " 0 0 0 0 "
 var_p  = 0.1
 
 # the rate of change in each environment
-rate1 = list(numpy.arange(0,math.pi+math.pi/10,math.pi/10))
+rate1 = [ 0.5 ]
 #print(rate1)
-rate2 = [0.5, math.pi - 0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math.pi/25))
+rate2 = [0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math.pi/25))
 
 #rate1 = [0, 0.5, math.pi - 0.5 ]
 #rate2 = [0, 0.5, math.pi - 0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math.pi/25))
@@ -30,12 +30,13 @@ rate2 = [0.5, math.pi - 0.5 ] #list(numpy.arange(0,2*math.pi+2*math.pi/25,2*math
 ampl1 = [ 1.0 ]
 #
 # vary the size of change in the mean environment 
-int_size1 = [ 1 ] #list(numpy.arange(0,5,5.0/25))
-int_size2 = [ 1 ] #list(numpy.arange(0,5,5.0/25))
+nx = 20
+int_size1 = list(numpy.arange(0,5 + 5.0/nx,5.0/nx))
+int_size2 = list(numpy.arange(0,5 + 5.0/nx,5.0/nx))
 
 # vary the direction of change in the mean environment (pos or neg)
-direction1 = [ 1 ]
-direction2 = [ 1 ]
+direction1 = [ -1, 1 ]
+direction2 = [ -1, 1 ]
 #
 # vary the rate of change following perturbation
 #rate1ptb = list(numpy.arange(-math.pi, math.pi, 2*math.pi/30))

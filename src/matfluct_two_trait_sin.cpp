@@ -459,7 +459,7 @@ void WriteData()
 void Reproduce()
 {
     // first change the environment
-    epsilon[0] = sin(rate1 * (generation + phi));
+    epsilon[0] = sin(rate1 * generation + phi);
     epsilon[1] = sin(rate2 * generation);
 
     int Nkids = 0;
