@@ -19,7 +19,7 @@ using namespace std;
 /////////////////// parameters ///////////////////
 const int Npop = 5000; // populaiton size
 const int Clutch = 10; // clutch size
-const int NumGen = 25000; // total number of generations
+const int NumGen = 50000; // total number of generations
 const int skip = 15; // data output each nskip-th generation
 
 double mu_g = 0.05;            // mutation rate
@@ -30,7 +30,8 @@ double mu_b = 0.05;            // mutation rate
 double sdmu_b = 0.4;			 // standard deviation mutation size
 
 bool diagonal_only = false; // only m11 and m22 allowed to evolve
-double sigma_p = sqrt(0.1); // phenotypic variance
+double sigma_p1 = sqrt(0.1); // phenotypic variance
+double sigma_p2 = sqrt(0.1); // phenotypic variance
 
 // initial values
 double int1_t0 = 0;
@@ -130,19 +131,20 @@ void initArguments(int argc, char *argv[])
     m[0][1] = atof(argv[10]);
     m[1][0] = atof(argv[11]);
     m[1][1] = atof(argv[12]);
-    sigma_p = sqrt(atof(argv[13]));
-    rate1_t0 = atof(argv[14]);
-    rate2_t0 = atof(argv[15]);
-    rate1ptb = atof(argv[16]);
-    rate2ptb = atof(argv[17]);
-    phiptb = atof(argv[18]);
-    int1ptb = atof(argv[19]);
-    int2ptb = atof(argv[20]);
-    ampl1_t0 = atof(argv[21]);
-    ampl2_t0 = atof(argv[22]);
-    ampl1ptb = atof(argv[23]);
-    ampl2ptb = atof(argv[24]);
-    diagonal_only = atoi(argv[25]);
+    sigma_p1 = sqrt(atof(argv[13]));
+    sigma_p2 = sqrt(atof(argv[14]));
+    rate1_t0 = atof(argv[15]);
+    rate2_t0 = atof(argv[16]);
+    rate1ptb = atof(argv[17]);
+    rate2ptb = atof(argv[18]);
+    phiptb = atof(argv[19]);
+    int1ptb = atof(argv[20]);
+    int2ptb = atof(argv[21]);
+    ampl1_t0 = atof(argv[22]);
+    ampl2_t0 = atof(argv[23]);
+    ampl1ptb = atof(argv[24]);
+    ampl2ptb = atof(argv[25]);
+    diagonal_only = atoi(argv[26]);
 }
 
 void MutateG(double &G)
@@ -166,7 +168,8 @@ void WriteParameters()
 		<< "type:;" << "multivar M" << ";" << endl
 		<< "diagonalM:;" << diagonal_only << ";" << endl
 		<< "c:;" <<  c << ";"<< endl
-		<< "sigma_p:;" <<  sigma_p << ";"<< endl
+		<< "sigma_p1:;" <<  sigma_p1 << ";"<< endl
+		<< "sigma_p2:;" <<  sigma_p2 << ";"<< endl
 		<< "rate1:;" <<  rate1_t0 << ";"<< endl
 		<< "rate2:;" <<  rate2_t0 << ";"<< endl
 		<< "ampl1:;" <<  ampl1_t0 << ";"<< endl
@@ -260,8 +263,8 @@ void Create_Kid(int mother, int father, Individual &kid)
     MutateG(kid.g[1][1]);
 
     // environmental variance
-    kid.phen[0] = gsl_ran_gaussian(r,sigma_p);
-    kid.phen[1] = gsl_ran_gaussian(r,sigma_p);
+    kid.phen[0] = gsl_ran_gaussian(r,sigma_p1);
+    kid.phen[1] = gsl_ran_gaussian(r,sigma_p2);
 
     // Kid's phenotype according to Kirkpatrick & Lande 1989, eq.4
     for (int i = 0; i < 2; ++i)
